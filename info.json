@@ -1,0 +1,7 @@
+{
+    "participants": ["Jonnathas de Gouvea"],
+    "social": ["https://github.com/jgouvea7/", "https://www.linkedin.com/in/jgouvea7"],
+    "source-code-repo": "https://github.com/jgouvea7/fraud-detection-api",
+    "stack": ["nodejs", "nginx"],
+    "open_to_work": true
+}
