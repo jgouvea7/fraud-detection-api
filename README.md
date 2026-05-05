@@ -17,8 +17,8 @@ Recebe um payload de transação de cartão, transforma em um vetor de 14 dimens
 
 ```
 nginx (balanceador de carga) — escuta em :9999
-  ├── api01 — Instância Hono API (porta 3000)
-  └── api02 — Instância Hono API (porta 3000)
+  ├── api01 — Instância Hono API (porta 9999)
+  └── api02 — Instância Hono API (porta 9999)
 ```
 
 Todos os serviços rodamcom limitações de CPU e memória via Docker Compose.
