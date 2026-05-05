@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   nginx:
     image: nginx:latest
@@ -13,25 +15,37 @@ services:
         limits:
           cpus: "0.10"
           memory: "50MB"
+    networks:
+      - rinha-network
 
   api01:
-    build: ./backend
+    image: aegdae/rinha-api-2026:latest
     platform: linux/amd64
-    expose:
-      - "9999"
+    hostname: api01
+    environment:
+      - PORT=9999
     deploy:
       resources:
         limits:
           cpus: "0.40"
           memory: "150MB"
+    networks:
+      - rinha-network
 
   api02:
-    build: ./backend
+    image: aegdae/rinha-api-2026:latest
     platform: linux/amd64
-    expose:
-      - "9999"
+    hostname: api02
+    environment:
+      - PORT=9999
     deploy:
       resources:
         limits:
           cpus: "0.40"
           memory: "150MB"
+    networks:
+      - rinha-network
+
+networks:
+  rinha-network:
+    driver: bridge
