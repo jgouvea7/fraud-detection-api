@@ -35,17 +35,6 @@ Busca k-NN por força bruta sobre vetores em memória:
 - Distância Euclidiana usada para similaridade
 
 
-## Decisões-chave
-
-| Decisão | Escolha | Motivo |
-|---------|---------|--------|
-| Framework | Hono | Overhead mínimo, inicialização rápida |
-| Linguagem | TypeScript | Produtividade do desenvolvedor + segurança de tipos |
-| Método de busca | k-NN por força bruta | Mais simples, determinístico, sem erro de aproximação |
-| Métrica de distância | Euclidiana | Direta e suficiente para dados normalizados |
-| Carregamento de dados | Streaming (JSON) | Evita picos de memória em datasets grandes |
-| Balanceamento de carga | Nginx | Distribuição round-robin simples |
-
 ## Layout dos Módulos
 
 ```
