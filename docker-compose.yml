@@ -12,7 +12,7 @@ services:
       resources:
         limits:
           cpus: "0.10"
-          memory: "50MB"
+          memory: "25MB"
 
   api01:
     build: ./backend
@@ -22,8 +22,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.40"
-          memory: "150MB"
+          cpus: "0.45"
+          memory: "162MB"
 
   api02:
     build: ./backend
@@ -33,5 +33,5 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.40"
-          memory: "150MB"
+          cpus: "0.45"
+          memory: "162MB"

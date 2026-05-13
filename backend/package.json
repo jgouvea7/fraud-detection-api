@@ -2,13 +2,14 @@
   "name": "backend",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch index.ts",
     "build": "tsc",
-    "start": "node --max-old-space-size=90 dist/main.js"
+    "start": "node --max-old-space-size=90 dist/index.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.14",
     "hono": "^4.12.16",
+    "stream-chain": "^3.6.2",
     "stream-json": "^2.1.0"
   },
   "devDependencies": {

@@ -35,7 +35,7 @@ export const options = {
             maxVUs: 250,
             gracefulStop: '10s',
             stages: [
-                { duration: '120s', target: 900 },
+                { duration: '30s', target: 200 },
             ],
         },
     },
@@ -165,7 +165,7 @@ export function handleSummary(data) {
     };
 
     return {
-        'test/results.json': JSON.stringify(result, null, 2),
+        'results.json': JSON.stringify(result, null, 2),
         //stdout: textSummary(data, { indent: ' ', enableColors: true }),
     };
 }

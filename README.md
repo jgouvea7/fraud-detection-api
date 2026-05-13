@@ -4,14 +4,11 @@ TypeScript + Hono para rinha-de-backend-2026 — uma API de detecção de fraude
 
 ### O que faz
 
-Recebe um payload de transação de cartão, transforma em um vetor de 14 dimensões, encontra os 5 vizinhos mais próximos em um conjunto de dados de referência rotulado usando distância Euclidiana e retorna:
+Recebe um payload de transação, transforma em um vetor de 14 dimensões, realiza uma busca ANN (*Approximate Nearest Neighbors*) para encontrar os 5 vizinhos mais próximos em um conjunto de dados rotulado usando distância Euclidiana e retorna:
 
 ```json
 { "approved": true, "fraud_score": 0.2 }
 ```
-
-- `approved = fraud_score < 0.6`
-- `fraud_score = fraudes_entre_5_vizinhos / 5`
 
 ## Arquitetura
 
@@ -21,51 +18,60 @@ nginx (balanceador de carga) — escuta em :9999
   └── api02 — Instância Hono API (porta 9999)
 ```
 
-Todos os serviços rodamcom limitações de CPU e memória via Docker Compose.
-
 ## Estratégia de Busca
 
-Busca k-NN por força bruta sobre vetores em memória:
+Busca ANN utilizando KD-Tree otimizada em C com AVX2.
 
-- Dataset carregado ao iniciar a partir de `references.json`
-- Cada requisição:
-  - Vetorização (14 features)
-  - Cálculo de distância contra todos os vetores
-  - Seleção dos 5 vizinhos mais próximos
+- Dataset e árvore são buildados junto da imagem Docker
+- Dataset carregado em memória via `mmap`
+- Busca realizada por travessia da KD-Tree
 - Distância Euclidiana usada para similaridade
+- Retorno dos 5 vizinhos mais próximos
+- Fallback para brute-force caso a árvore não esteja disponível
 
 
 ## Layout dos Módulos
 
 ```
 src/
-  index.ts                                 inicialização do servidor (Hono + serve)
-  controller/
-    api.ts                                 rotas da API (/ready, /fraud-score)
-  configs/
-    vector-limits.ts                       configuracao de vetorização
+  resources/
+    references.json.gz                          dataset zipado
+    mcc_risk.json                               mapeamento de risco MCC
+  scripts/
+    ann_build.c                                 build e serialização da KD-Tree
+    convert_dataset.c                           conversão do dataset JSON para binário              
   services/
-    vetorizedService.ts                    lógica de vetorização (14 features)
-    knnService.ts                          distância + vizinhos mais próximos
-  dto/
-    response.dto.ts                        response DTO
-    customer-response.dto.ts               customer DTO
-    last_transaction-response.dto.ts       last transaction DTO
-    merchant-response.dto.ts               merchant DTO
-    terminal-response.dto.ts               terminal DTO
-    transaction-response.dto.ts            transaction DTO
-  types/
-    referenceItem.ts                       tipagem do dataset
+    api/
+      dto/
+        response.dto.ts                         response DTO
+        customer-response.dto.ts                customer DTO
+        last_transaction-response.dto.ts        last transaction DTO
+        merchant-response.dto.ts                merchant DTO
+        terminal-response.dto.ts                terminal DTO
+        transaction-response.dto.ts             transaction DTO
+      types/
+        referenceItem.ts                        tipagem do dataset
+      configs/
+        vectorLimits.ts                         configuração de vetorização
+      vectorized.ts                             lógica de vetorização (14 features)
+      controller.ts                             rotas da API (/ready, /fraud-score)
+      ann.ts                                    integração TypeScript com engine ANN
+      annPool.ts                                pool de workers/processos da ANN
+      fraud.ts                                  cálculo de score de fraude
+      mccRisk.ts                                
 
-resources/
-  references.json                          dataset rotulado (~248MB)
-  mcc_risk.json                            mapeamento de risco MCC
+    native/
+      ann.c                                     engine ANN/KD-Tree otimizada em C
+      ann.h                                     interface nativa da busca ANN
+ 
+  index.ts                                      inicialização do servidor (Hono + serve) 
+
 ```
 
 ## Desenvolvimento
 
 ```bash
-docker compose up --build
+docker compose up -d --build
 ```
 
 Teste de health check:
@@ -81,10 +87,3 @@ curl -X POST http://localhost:9999/fraud-score \
   -H "Content-Type: application/json" \
   -d '{ ... }'
 ```
-
-## Notas
-
-- Dataset é carregado em memória uma vez ao iniciar
-- Cada requisição executa uma varredura completa (O(N))
-- Foco em correção primeiro, performance depois
-- Projetado para rodar com limitações de recursos
