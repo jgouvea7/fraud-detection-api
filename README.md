@@ -1,4 +1,4 @@
-## rinha-hono-2026
+## rinha-hono-C-2026
 
 TypeScript + C para rinha-de-backend-2026 — uma API de detecção de fraudes avaliada por latência e precisão.
 
