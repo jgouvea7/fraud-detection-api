@@ -4,9 +4,10 @@ import { getMccRisk } from "./mccRisk.js";
 
 
 const limite = (val: number) => Math.max(0, Math.min(1, val));
-const vector = new Float32Array(16);
+
 
 export const transformToVector = (dto: ResponseDTO): Float32Array => {
+    const vector = new Float32Array(16);
     const tx = dto.transaction;
     const customer = dto.customer;
     const merchant = dto.merchant;
@@ -36,7 +37,8 @@ export const transformToVector = (dto: ResponseDTO): Float32Array => {
     const tx_count_24h = customer.tx_count_24h / VECTOR_LIMITS.MAX_TX_COUNT_24H;
     const is_online = (terminal.is_online == true) ? 1 : 0;
     const card_present = (terminal.card_present == true) ? 1 : 0;
-    const unknown_merchant = (!customer.known_merchants.includes(merchant.id)) ? 1 : 0;
+    const knownMerchants = customer.known_merchants;
+    const unknown_merchant = !knownMerchants || !knownMerchants.includes(merchant.id) ? 1 : 0;
     const mcc_risk = getMccRisk(merchant.mcc)
     const merchant_avg_amount = merchant.avg_amount / VECTOR_LIMITS.MAX_MERCHANT_AVG_AMOUNT;
 

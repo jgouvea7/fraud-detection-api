@@ -19,8 +19,8 @@ const DATASET_PATH = process.env.ANN_DATASET_PATH ??
 
 
 const WORKER_COUNT = 1
-const MAX_INFLIGHT = 7
-const REQUEST_TIMEOUT_MS = Number(process.env.ANN_TIMEOUT_MS ?? 8000);
+const MAX_INFLIGHT = 14
+const REQUEST_TIMEOUT_MS = 500
 
 export type ANNResponse = {
     indices: number[];
@@ -112,7 +112,7 @@ class ANNWorker {
 
     private processBuffer() {
         if (!this.ready) {
-            const idx = this.buffer.indexOf(10); // \n
+            const idx = this.buffer.indexOf(10);
             if (idx !== -1) {
                 this.ready = true;
                 this.buffer = this.buffer.subarray(idx + 1);
