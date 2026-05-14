@@ -19,7 +19,7 @@ services:
       - rinha-network
 
   api01:
-    image: aegdae/rinha-api-2026:latest
+    image: aegdae/rinha-api-2026:v2
     platform: linux/amd64
     hostname: api01
     environment:
@@ -33,7 +33,7 @@ services:
       - rinha-network
 
   api02:
-    image: aegdae/rinha-api-2026:latest
+    image: aegdae/rinha-api-2026:v2
     platform: linux/amd64
     hostname: api02
     environment:
